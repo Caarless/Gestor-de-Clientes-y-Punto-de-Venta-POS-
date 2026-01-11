@@ -1,0 +1,275 @@
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    --bg-dark: #0f172a;
+    --surface: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.panel {
+    background: var(--surface);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+h1,
+h2,
+h3 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    color: var(--text-main);
+    font-size: 1rem;
+}
+
+input:focus,
+select:focus {
+    outline: 2px solid var(--primary);
+    border-color: transparent;
+}
+
+.btn {
+    width: 100%;
+    padding: 1rem;
+    border: none;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
+.btn-outline:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+}
+
+/* Cart */
+.cart-list {
+    margin: 1.5rem 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+}
+
+.cart-item {
+    padding: 0.8rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.close-btn {
+    cursor: pointer;
+}
+
+.receipt-card {
+    background: white;
+    color: black;
+    padding: 2.5rem;
+    border-radius: 4px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Receipt Specifics to match Image */
+.r-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.r-title {
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+}
+
+.r-info {
+    font-size: 0.9rem;
+    color: #444;
+    margin-top: 0.2rem;
+}
+
+.r-divider {
+    border-bottom: 1px solid #ddd;
+    margin: 1rem 0;
+}
+
+.r-dashed {
+    border-bottom: 1px dashed #ddd;
+    margin: 1rem 0;
+}
+
+.r-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.r-label {
+    color: #666;
+}
+
+.r-value {
+    font-weight: 600;
+    text-align: right;
+}
+
+.r-concept {
+    font-weight: 600;
+    text-align: right;
+}
+
+.r-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    align-items: center;
+}
+
+.r-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .receipt-card,
+    .receipt-card * {
+        visibility: visible;
+    }
+
+    .receipt-card {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .modal-overlay {
+        background: white;
+        position: static;
+        display: block;
+    }
+}

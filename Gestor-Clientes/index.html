@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión Clientes</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- jsPDF & html2pdf -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- Styles -->
+    <link rel="stylesheet" href="./CSS/styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i data-lucide="hexagon"></i>
+                <span>Gestión Clientes</span>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="dashboard">
+                    <i data-lucide="layout-dashboard"></i> Dashboard
+                </button>
+                <button class="nav-item" data-tab="estadisticas">
+                    <i data-lucide="bar-chart-2"></i> Estadísticas
+                </button>
+                <button class="nav-item" data-tab="venta">
+                    <i data-lucide="shopping-cart"></i> Ventas
+                </button>
+                <button class="nav-item" data-tab="por_pagar">
+                    <i data-lucide="credit-card"></i> Por Pagar
+                </button>
+                <button class="nav-item" data-tab="reparacion">
+                    <i data-lucide="wrench"></i> Reparaciones
+                </button>
+                <div style="height:1px; background:var(--border-color); margin:0.5rem 1rem;"></div>
+                <button class="nav-item" data-tab="completados">
+                    <i data-lucide="archive"></i> Completados
+                </button>
+                <div style="height:1px; background:var(--border-color); margin:0.5rem 1rem;"></div>
+                <a href="./ventas.html" class="nav-item" style="text-decoration:none;">
+                    <i data-lucide="shopping-bag"></i> Punto de Venta
+                </a>
+            </nav>
+
+            <div class="data-controls"
+                style="margin-top:auto; padding-top:1rem; border-top:1px solid var(--border-color); display:flex; gap:0.5rem; flex-direction:column;">
+                <button id="btn-export" class="btn-secondary full-width" style="font-size:0.85rem; padding:0.5rem;">
+                    <i data-lucide="download"></i> Guardar Datos
+                </button>
+                <button id="btn-import" class="btn-secondary full-width" style="font-size:0.85rem; padding:0.5rem;">
+                    <i data-lucide="upload"></i> Cargar Datos
+                </button>
+                <input type="file" id="file-input" accept=".json" style="display:none">
+            </div>
+
+            <button id="btn-add-new" class="btn-primary full-width" style="margin-top:1rem;">
+                <i data-lucide="plus"></i> Nuevo Registro
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 id="page-title">Dashboard</h1>
+                <div class="search-bar">
+                    <i data-lucide="search"></i>
+                    <input type="text" id="global-search" placeholder="Buscar por DNI, Nombre...">
+                </div>
+            </header>
+
+            <div id="content-area" class="content-area">
+                <!-- Content injected via JS -->
+                <div class="empty-state">
+                    <i data-lucide="ghost"></i>
+                    <p>Selecciona una sección o añade un nuevo registro</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Form -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Nuevo Registro</h2>
+                <button id="btn-close-modal" class="btn-icon"><i data-lucide="x"></i></button>
+            </div>
+            <form id="record-form">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <div class="type-selector">
+                        <label class="radio-label">
+                            <input type="checkbox" name="type" value="venta" checked>
+                            <span>Venta</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="checkbox" name="type" value="por_pagar">
+                            <span>Por Pagar</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="checkbox" name="type" value="reparacion">
+                            <span>Reparación</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Venta Specific Fields (Hidden by default) -->
+                <div id="venta-fields" class="form-section"
+                    style="background: var(--bg-dark); padding: 1rem; border-radius: var(--radius); margin-bottom: 1.25rem; border: 1px solid var(--border-color); display:none;">
+                    <h3
+                        style="font-size: 0.9rem; color: var(--accent-color); margin-bottom: 0.75rem; text-transform:uppercase; font-weight:600;">
+                        Detalles de Venta</h3>
+                    <div class="form-row">
+                        <div class="form-group" style="flex:2;">
+                            <label>Producto / Servicio</label>
+                            <input type="text" name="productName" placeholder="Nombre del producto">
+                        </div>
+                        <div class="form-group">
+                            <label>Código</label>
+                            <input type="text" name="productCode" placeholder="COD-123">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" name="quantity" value="1" min="1">
+                        </div>
+                        <div class="form-group" style="flex:2;">
+                            <label>Método de Pago</label>
+                            <select name="paymentMethod"
+                                style="width:100%; padding:0.75rem; border-radius:var(--radius); background:var(--bg-card); border:1px solid var(--border-color); color:var(--text-primary);">
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Bizum">Bizum</option>
+                                <option value="Transferencia">Transferencia</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" name="firstName" required placeholder="Ej. Juan">
+                    </div>
+                    <div class="form-group">
+                        <label>Apellido</label>
+                        <input type="text" name="lastName" required placeholder="Ej. Pérez">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>DNI</label>
+                        <input type="text" name="dni" required placeholder="12345678X">
+                    </div>
+                    <div class="form-group">
+                        <label>Teléfono (Opcional)</label>
+                        <input type="tel" name="phone" placeholder="600 000 000">
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+                        <input type="date" name="date" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Resumen / Descripción</label>
+                    <textarea name="summary" rows="3" placeholder="Detalles de la operación..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Importe (€)</label>
+                    <input type="number" name="amount" step="0.01" placeholder="0.00">
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="btn-cancel">Cancelar</button>
+                    <button type="submit" class="btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Receipt Modal -->
+    <div id="receipt-modal" class="modal hidden">
+        <div class="modal-content receipt-modal-content">
+            <div class="modal-header">
+                <h2>Vista Previa del Recibo</h2>
+                <button id="btn-close-receipt" class="btn-icon"><i data-lucide="x"></i></button>
+            </div>
+
+            <div id="receipt-preview-area" class="receipt-paper">
+                <!-- Receipt Content Injected Here -->
+                <div class="receipt-header">
+                    <h3>RECIBOS</h3>
+                    <p>C/ Ejemplo, 123</p>
+                    <p>Tel: 900 000 000</p>
+                </div>
+                <hr>
+                <div class="receipt-details">
+                    <!-- Dynamic content -->
+                </div>
+                <hr>
+                <div class="receipt-footer">
+                    <p>Gracias por su confianza</p>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="justify-content: center; margin-top: 1.5rem;">
+                <button type="button" class="btn-secondary" id="btn-print-receipt">
+                    <i data-lucide="printer"></i> Imprimir
+                </button>
+                <button type="button" class="btn-secondary" id="btn-download-pdf">
+                    <i data-lucide="file-down"></i> PDF
+                </button>
+                <button type="button" class="btn-primary" id="btn-email-receipt">
+                    <i data-lucide="mail"></i> Email
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal hidden">
+        <div class="modal-content" style="width: 600px;">
+            <div class="modal-header">
+                <div>
+                    <h2 id="history-title">Historial del Cliente</h2>
+                    <p id="history-subtitle" style="color:var(--text-secondary); font-size:0.9rem; margin-top:0.25rem;">
+                        DNI: -</p>
+                </div>
+                <button id="btn-close-history" class="btn-icon"><i data-lucide="x"></i></button>
+            </div>
+
+            <div id="history-list" class="history-list">
+                <!-- Injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="./JS/script.js"></script>
+</body>
+
+</html>

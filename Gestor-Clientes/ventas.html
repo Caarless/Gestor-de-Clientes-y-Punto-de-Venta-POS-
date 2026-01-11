@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Ventas</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./CSS/ventas.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div style="margin-bottom: 1rem;">
+            <a href="./index.html" class="btn btn-outline"
+                style="text-decoration:none; border:none; padding-left:0; color:var(--text); display:inline-flex; align-items:center; gap:0.5rem;">
+                <span>←</span> Volver al Gestor
+            </a>
+        </div>
+        <h1 class="full-width">Punto de Venta</h1>
+
+        <!-- Client Info Panel -->
+        <div class="panel full-width">
+            <h2>Datos del Cliente y Venta</h2>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nombre del Cliente</label>
+                    <input type="text" id="clientName" placeholder="Ej: Juan Pérez Apellido">
+                </div>
+                <div class="form-group">
+                    <label>DNI</label>
+                    <input type="text" id="clientDni" placeholder="Ej: 12345678X">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" id="clientPhone" placeholder="Ej: +34 600 000 000">
+                </div>
+                <div class="form-group">
+                    <label>Concepto</label>
+                    <input type="text" id="saleConcept" placeholder="Ej: Prueba">
+                </div>
+                <div class="form-group full-width">
+                    <label>Tipo</label>
+                    <select id="saleType">
+                        <option value="REPARACION">REPARACION</option>
+                        <option value="VENTA">VENTA</option>
+                        <option value="PRESUPUESTO">PRESUPUESTO</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Input -->
+        <div class="panel">
+            <h3>Agregar Producto</h3>
+            <div class="form-group">
+                <label>Código</label>
+                <input type="text" id="prodCode" placeholder="A-001">
+            </div>
+            <div class="form-group">
+                <label>Precio (€)</label>
+                <input type="number" id="prodPrice" step="0.01" placeholder="0.00">
+            </div>
+            <button class="btn btn-primary" onclick="addToCart()">Agregar</button>
+        </div>
+
+        <!-- Cart Preview -->
+        <div class="panel">
+            <h3>Resumen</h3>
+            <div class="cart-list" id="cartList">
+                <div style="padding:1rem; text-align:center; color:#666">Carrito vacío</div>
+            </div>
+            <div
+                style="display:flex; justify-content:space-between; font-size:1.2rem; font-weight:bold; margin-bottom:1rem;">
+                <span>Total:</span>
+                <span id="displayTotal">0.00 €</span>
+            </div>
+            <button class="btn btn-outline" style="background:var(--surface); color:white; border-color:var(--primary);"
+                onclick="showReceiptModal()">
+                Generar Recibo
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <span>Vista Previa del Recibo</span>
+                <span class="close-btn" onclick="closeModal()">✕</span>
+            </div>
+
+            <div class="receipt-card">
+                <div class="r-header">
+                    <div class="r-title">RECIBOS</div>
+                    <div class="r-info">C/ Ejemplo, 123<br>Tel: 900 000 000</div>
+                </div>
+
+                <div class="r-divider"></div>
+
+                <div class="r-row">
+                    <span class="r-label">Fecha:</span>
+                    <span class="r-value" id="rDate"></span>
+                </div>
+                <div class="r-row">
+                    <span class="r-label">Recibo N.º:</span>
+                    <span class="r-value" id="rId"></span>
+                </div>
+
+                <div class="r-dashed"></div>
+
+                <div class="r-row">
+                    <span class="r-label">Cliente:</span>
+                    <span class="r-value" id="rClient"></span>
+                </div>
+                <div class="r-row">
+                    <span class="r-label">DNI:</span>
+                    <span class="r-value" id="rDni"></span>
+                </div>
+                <div class="r-row">
+                    <span class="r-label">Teléfono:</span>
+                    <span class="r-value" id="rPhone"></span>
+                </div>
+                <div class="r-row">
+                    <span class="r-label">Concepto:</span>
+                    <span class="r-value" id="rConcept"></span>
+                </div>
+
+                <div class="r-divider"></div>
+
+                <div class="r-row">
+                    <span class="r-label">TIPOS:</span>
+                    <span class="r-value" id="rType" style="text-transform:uppercase;"></span>
+                </div>
+
+                <div class="r-divider"></div>
+
+                <!-- Products in Receipt (Optional, assuming only total is critical based on image, but good to have) -->
+                <!-- If the user wants individual items listed, we can uncomment below or just keep it simple as per image "Total" -->
+                <div id="rItemsList" style="margin-bottom: 1rem;"></div>
+
+                <div class="r-total">
+                    <span>TOTAL</span>
+                    <span id="rTotal">0,00 €</span>
+                </div>
+
+                <div class="r-divider"></div>
+
+                <div class="r-footer">Gracias por su confianza</div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir</button>
+                <button class="btn btn-outline" style="background:white; color:black;" onclick="sendEmail()">📧
+                    Email</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./JS/ventas.jss"></script>
+
+</body>
+
+</html>
